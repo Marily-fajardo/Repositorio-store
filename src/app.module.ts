@@ -20,9 +20,9 @@ import { MarcasModule } from './marcas/marcas.module';
     }),
     ProductsModule,
     UsersModule,
-    MarcasModule,
+    MarcasModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
