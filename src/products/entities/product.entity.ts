@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Category } from './category.entity';
 
 @Entity()
 export class Product {
@@ -18,18 +19,30 @@ export class Product {
   @Column({ type: 'int8', nullable: false })
   stock: number;
 
-  @Column({type: 'int4', nullable: false})
+  @Column({ type: 'int4', nullable: false })
   user_id: number;
 
+  @Column({ type: 'varchar', nullable: true })
+  filename: string;
+  
+  @Column({ type: 'varchar', nullable: true })
+  categoria_id: number;
+  
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created_at:Date;
 
-  //relaciones
+  
+  @ManyToOne(() => Category)
+  @JoinColumn({ 
+    name: 'categoria_id' 
+  })
+  categoria: Category;
+
+
   @ManyToOne(()=> User)
   @JoinColumn({
-    name: 'user_id', //el campo que relaciona a mi tabla
-    referencedColumnName: 'id' //este es el id del usuario
-
-  })
-  autor: User;
-
-
+    name: 'user_id', 
+    referencedColumnName: 'id'
+   })
+   autor: User;
 }

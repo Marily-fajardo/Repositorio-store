@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
-import { MarcasService } from './services/marcas.service';
-import { MarcaController } from './controllers/marcas.controller';
-import { Marca } from './entities/marca.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Modelo } from './entities/modelo.entity';
-import { ModeloController } from './controllers/modelos.controller';
+import { Modelos } from './entities/modelos.entity';
+import { MarcasService } from './services/marcas.service';
+import { Marca } from './entities/marca.entity';
 import { ModelosService } from './services/modelos.service';
+import { MarcaController } from './controllers/marcas.controller';
+import { ModelosController } from './controllers/modelos.controller';
+
+
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Marca, Modelo])],
-  controllers: [MarcaController, ModeloController ],
-  providers: [MarcasService, ModelosService]
+  imports: [TypeOrmModule.forFeature([Marca, Modelos])],
+  controllers: [MarcaController, ModelosController],
+  providers: [MarcasService, ModelosService],
 })
 export class MarcasModule {}
-

@@ -1,9 +1,10 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { CreateUserDto } from '../dto/user.dto';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn({ type: 'int4' })
-  id: number;
+  id?: number;
 
   @Column({ type: 'varchar', length: 100, nullable: false })
   name: string;

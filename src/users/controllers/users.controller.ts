@@ -1,38 +1,40 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
-import { UsersService } from "../services/users.service";
-import { CreateUserDto } from "../dto/user.dto";
-
+import { Controller, Post, Body, Param, ParseIntPipe, Get, Delete, Patch } from '@nestjs/common';
+import { CreateUserDto } from '../dto/user.dto';
+import { UsersService } from '../services/users.service';
 
 @Controller('users')
-export class UserController
-{
-    constructor(private readonly usersService:UsersService){}
-    @Post()
-    async CreateUser(@Body() createUserDto: CreateUserDto){
-        return this.usersService.create(createUserDto);
-    }
+export class UsersController {
+  constructor(private readonly usersServices: UsersService) {}
 
-    @Get()
-    findAll(){
-        return this.usersService.findAll();
-    }
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.usersServices.create(createUserDto);
+  }
 
-    @Get(':id')
-    findOne(@Param('id', ParseIntPipe)id: number){
-        return this.usersService.findOne(id);
-    }
-    @Delete(':id')
-    remove(@Param('id', ParseIntPipe)id: number){
-        return this.usersService.remove(id);
-    }
+  @Get()
+  findAll() {
+    return this.usersServices.findAll();
 
-    @Patch(':id')
-    update(
-        @Param('id', ParseIntPipe)id: number,
-        @Body()createUserDto :CreateUserDto,
-        
-    )
-    {
-        return this.usersService.update(id, createUserDto)
-    }
+  }
+
+  @Get(':id')
+  finOne(@Param('id', ParseIntPipe) id: number){
+    return this.usersServices.finOne(id);
+
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersServices.remove(id);
+  }
+
+  //el metodo patch actualiza parcialmente
+  //los pipes son transformadores, transforman la data
+  @Patch('id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() createUserDto: CreateUserDto,
+  ) {
+    return this.usersServices.update(id, createUserDto);
+  }
 }

@@ -1,42 +1,48 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/user.dto';
+import { User } from '../entities/user.entity';
 
 @Injectable()
-export class UsersService{
-    constructor(
-        @InjectRepository(User)
-        private userRepo: Repository<User>
-    ){}
+export class UsersService {
 
-    async create(createUserDto:CreateUserDto){
-        const user = this.userRepo.create(createUserDto);
-        await  this.userRepo.save(user);
-        return user;
-    }
-    //Encontrar un user
-    findOne(id: number){
-        return this.userRepo.findOneBy({id})
-    }
-    //mostrar todos los usuarios
-    findAll(){
-        return   this.userRepo.find({
-            order: {id: 'ASC'},
-        });
-    }
-    //eliminar un usuario
-    async remove(id:number){
-        const user =await this.findOne(id);
-        await this.userRepo.remove(user);
-        return 'Usuario eliminado';
-    }
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>
+  ) {}
+//crear un registro
+  async create(createUserDto: CreateUserDto) {
+    const user = this.userRepo.create(createUserDto);
+    await this.userRepo.save(user);
 
-    //actualizar un usuario
-    async update(id: number, cambios: CreateUserDto){
-        const oldUser = await this.findOne(id);
-        const updateUser = await this.userRepo.merge(oldUser, cambios);
-        return this.userRepo.save(updateUser);
-    }
+    return user;
+  }
+
+  //encotrar un producto
+  finOne(id: number){
+    return this.userRepo.findOneBy({ id });
+  }
+
+  //mostrar todos los registros
+  findAll(){
+    return this.userRepo.find({
+      order: { id: 'ASC'},
+    });
+  }
+
+
+//eliminar un registro
+  async remove(id: number) {
+  const user = await this.finOne(id);
+  await this.userRepo.remove(user);
+  return ' producto eliminado satisfactoriamente' ;
+  }
+
+  //actualizar un producto
+  async update(id: number, cambios: CreateUserDto) {
+    const olduser = await this.finOne(id);
+    const updateuser = await this.userRepo.merge(olduser, cambios);
+    return this.userRepo.save(updateuser);
+  }
 }

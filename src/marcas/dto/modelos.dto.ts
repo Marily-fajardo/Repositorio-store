@@ -1,18 +1,20 @@
 import { IsNotEmpty, IsNumber, IsString, MaxLength} from 'class-validator';
 
-export class CreateModeloDto {
+export class CreateModelosDto {
   @IsNotEmpty()
   @IsNumber()
   id: number;
 
+  @IsString()
   @IsNotEmpty()
-  @IsNumber()
+  @MaxLength(100)
   marca_id: number;
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
-  nombre: string;
+  name: string;
+
 
   @IsNumber()
   @IsNotEmpty()

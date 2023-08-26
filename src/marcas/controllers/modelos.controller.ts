@@ -1,15 +1,16 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
-import { CreateModeloDto } from "../dto/modelo.dto";
+
+import { CreateModelosDto } from "../dto/modelos.dto";
 import { ModelosService } from "../services/modelos.service";
 
 
 @Controller('modelos')
-export class ModeloController
+export class ModelosController
 {
     constructor(private readonly modelosService:ModelosService){}
     @Post()
-    async CreateModelo(@Body() createModeloDto: CreateModeloDto){
-        return this.modelosService.create(createModeloDto);
+    async CreateModelos(@Body() createModelosDto: CreateModelosDto){
+        return this.modelosService.create(createModelosDto);
     }
 
     
@@ -30,10 +31,10 @@ export class ModeloController
     @Patch(':id')
     update(
         @Param('id', ParseIntPipe)id: number,
-        @Body()createModeloDto :CreateModeloDto,
+        @Body()createModelosDto :CreateModelosDto,
         
     )
     {
-        return this.modelosService.update(id, createModeloDto)
+        return this.modelosService.update(id, createModelosDto)
     }
 }
