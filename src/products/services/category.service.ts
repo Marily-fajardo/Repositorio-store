@@ -42,7 +42,7 @@ export class CategoryService {
   async remove(id: number) {
   const category = await this.finOne(id);
   await this.categoryRepo.remove(category);
-  return ' categoria eliminada satisfactoriamente' ;
+  return ' categoria eliminada' ;
   }
 
   //actualizar una categoria
