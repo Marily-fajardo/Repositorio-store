@@ -1,14 +1,41 @@
-import { Controller, Post } from "@nestjs/common";
-import { FilesService } from "../services/files.service";
-
- 
-@Controller('files')
-export class FilesController {
+import {
+    BadRequestException,
+    Controller,
+    Post,
+    UploadedFile,
+    UseInterceptors,
+  } from '@nestjs/common';
+  import { FilesService } from '../services/files.service';
+  import { FileInterceptor } from '@nestjs/platform-express';
+  import { diskStorage } from 'multer';
+import { fileFilter } from 'src/helpers/fileFilter.helpers';
+import { fileNamer } from 'src/helpers/fileNamer';
+  
+  
+  @Controller('files')
+  export class FilesController {
     constructor(private readonly filesService: FilesService) {}
-
-    @Post('product')
-    UploadImage(){
-        return 'Hola Mundo';
-
+  
+    @Post('upload')
+    @UseInterceptors(
+      FileInterceptor('file', {
+        //Llamamos al fileFilter de Multer y le asignamos nuestro helper
+        fileFilter: fileFilter,
+  
+        //Definimos en donde se va a guardar el archivo y lo renombramos
+        storage: diskStorage({
+          destination: './static/products/',
+          filename: fileNamer,
+        }),
+      }),
+    )
+    uploadFile(@UploadedFile() file: Express.Multer.File) {
+      if (!file) {
+        throw new BadRequestException('Asegurese que el archivo es una imagen');
+      }
+  
+      return {
+        fileName: file.filename,
+      };
     }
-}
+  }
