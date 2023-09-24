@@ -1,10 +1,10 @@
 import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from "class-validator";
 
 
-export class createProveedordto{
+export class CreateProveedorDto {
     @IsNotEmpty()
     @IsNumber()
-    id?: number;
+    id?:number;
 
     @IsString()
     @IsNotEmpty()
@@ -13,10 +13,13 @@ export class createProveedordto{
 
     @IsNumber()
     @IsNotEmpty()
-    user_id: number;  
+    user_id: number;
 
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(300)
-    create_ad: Date;
+    @IsDateString()
+    @IsOptional()
+    created_at:Date;
+
+
+
+
 }
