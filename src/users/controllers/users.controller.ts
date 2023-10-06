@@ -18,8 +18,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  finOne(@Param('id', ParseIntPipe) id: number){
-    return this.usersServices.finOne(id);
+  findOne(@Param('id', ParseIntPipe) id: number){
+    return this.usersServices.findOne(id);
 
   }
 

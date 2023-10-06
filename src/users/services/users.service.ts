@@ -1,48 +1,100 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateUserDto } from '../dto/user.dto';
+import { UserImage } from '../entities/user-image.entity';
 import { User } from '../entities/user.entity';
 
 @Injectable()
 export class UsersService {
-
   constructor(
     @InjectRepository(User)
-    private readonly userRepo: Repository<User>
-  ) {}
-//crear un registro
-  async create(createUserDto: CreateUserDto) {
-    const user = this.userRepo.create(createUserDto);
-    await this.userRepo.save(user);
+    private readonly userRepo: Repository<User>,
 
+    @InjectRepository(UserImage)
+    private readonly userImageRepo: Repository<UserImage>,
+
+    private readonly dataSource: DataSource,
+  ) {}
+
+  async create(userDto: CreateUserDto){
+    const { images = [], ...detailsUser } = userDto;
+
+    const user = await this.userRepo.create({
+      ...detailsUser,
+      images: images.map((image) => 
+      this.userImageRepo.create({ url: image }),
+      ),
+    });
+
+    await this.userRepo.save(user);
     return user;
+
   }
 
   //encotrar un producto
-  finOne(id: number){
-    return this.userRepo.findOneBy({ id });
-  }
-
+  findOne(id: number){
+    return this.userRepo.findOne({
+        where: {id},
+        relations: {
+           autor: true,
+      
+        },
+   
+    });
+}
   //mostrar todos los registros
   findAll(){
-    return this.userRepo.find({
-      order: { id: 'ASC'},
+    return   this.userRepo.find({
+        order: {id: 'ASC'},
+        relations: {
+            images: true,
+        },
     });
-  }
+}
 
 
 //eliminar un registro
   async remove(id: number) {
-  const user = await this.finOne(id);
+  const user = await this.findOne(id);
   await this.userRepo.remove(user);
-  return ' producto eliminado satisfactoriamente' ;
+  return ' usuario eliminado satisfactoriamente' ;
   }
 
-  //actualizar un producto
-  async update(id: number, cambios: CreateUserDto) {
-    const olduser = await this.finOne(id);
-    const updateuser = await this.userRepo.merge(olduser, cambios);
-    return this.userRepo.save(updateuser);
+ //Actualizar un producto con imagenes
+ async update(id: number, cambios: CreateUserDto){
+  const {images, ...updateAll } = cambios;
+  const user = await this.userRepo.preload({
+      id: id,
+      //Spread Operator(operador para esparcir)
+      ...updateAll,//Esparcir todos los datos del producto
+      
+
+  
+  });
+  //correr el queryRunner
+
+  const queryRunner = this.dataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  if(images) {
+      //sino esta vacio borramos las imagenes existentes
+      await queryRunner.manager.delete(UserImage, {product: { id }});
+      
+      //creamos nuevas imagenes
+      user.images = images.map((image) =>
+      this.userImageRepo.create({ url: image }),
+      );
+  } else {
+      user.images = await this.userImageRepo.findBy({ user: { id }});
   }
+  //guardamos el producto
+  await queryRunner.manager.save(user);
+
+  //finalizamos la transaccion y liberamos el queryRunner
+  await queryRunner.commitTransaction();
+  await queryRunner.release();
+  return user;
+}
 }

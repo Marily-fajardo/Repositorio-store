@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { CreateUserDto } from '../dto/user.dto';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UserImage } from './user-image.entity';
 
 @Entity()
 export class User {
@@ -20,4 +20,12 @@ export class User {
 
   @Column({ type: 'boolean', default: true })
   active: boolean;
+
+  autor:User;
+@OneToMany(() => UserImage, (userImage) => userImage.user, {
+  cascade: true,
+})
+images?: UserImage[];
 }
+
+
